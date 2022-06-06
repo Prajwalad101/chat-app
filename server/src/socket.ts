@@ -6,10 +6,12 @@ const EVENTS = {
   connection: 'connection',
   CLIENT: {
     CREATE_ROOM: 'CREATE_ROOM',
+    SEND_ROOM_MESSAGE: 'SEND_ROOM_MESSAGE',
   },
   SERVER: {
     ROOMS: 'ROOMS',
     JOINED_ROOM: 'JOINED_ROOM',
+    ROOM_MESSAGE: 'ROOM_MESSAGE',
   },
 };
 
@@ -21,6 +23,9 @@ function socket({ io }: { io: Server }) {
   io.on(EVENTS.connection, (socket) => {
     logger.info(`User connected ${socket.id}`);
 
+    /*
+     * When a user creates a new room
+     */
     socket.on(
       EVENTS.CLIENT.CREATE_ROOM,
       ({ roomName }: { roomName: string }) => {
@@ -42,6 +47,27 @@ function socket({ io }: { io: Server }) {
 
         // emit event back to the room creator saying they have joined the room
         socket.emit(EVENTS.SERVER.JOINED_ROOM, roomId);
+      }
+    );
+
+    /*
+     * When a user sends a room message
+     */
+    interface NewMessageParams {
+      roomId: string;
+      message: string;
+      username: string;
+    }
+    socket.on(
+      EVENTS.CLIENT.SEND_ROOM_MESSAGE,
+      ({ roomId, message, username }: NewMessageParams) => {
+        const date = new Date();
+
+        socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
+          message,
+          username,
+          time: `${date.getHours()}: ${date.getMinutes()}`,
+        });
       }
     );
   });

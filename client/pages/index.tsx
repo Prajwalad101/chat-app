@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import MessagesContainer from '../containers/Messages';
 import RoomsContainer from '../containers/Rooms';
 import { useSockets } from '../context/socket.context';
+import styles from '../styles/Home.module.css';
 
 export default function Home() {
   const { socket, username, setUsername } = useSockets();
@@ -21,16 +22,18 @@ export default function Home() {
   return (
     <div>
       {!username && (
-        <div>
-          <input placeholder="Username" ref={usernameRef} />
-          <button onClick={handleSetUsername}>START</button>
+        <div className={styles.usernameWrapper}>
+          <div className={styles.usernameInner}>
+            <input placeholder="Username" ref={usernameRef} />
+            <button onClick={handleSetUsername}>START</button>
+          </div>
         </div>
       )}
       {username && (
-        <>
+        <div className={styles.container}>
           <RoomsContainer />
           <MessagesContainer />
-        </>
+        </div>
       )}
     </div>
   );

@@ -2,8 +2,8 @@ import { Server } from 'socket.io';
 import logger from './utils/logger';
 
 const EVENTS = {
-  connection: 'connection';
-}
+  connection: 'connection',
+};
 
 function socket({ io }: { io: Server }) {
   logger.info('Sockets enabled');

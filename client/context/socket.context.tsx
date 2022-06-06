@@ -41,7 +41,6 @@ function SocketsProvider(props: any) {
 
   socket.on(EVENTS.SERVER.JOINED_ROOM, (value) => {
     setRoomId(value);
-
     setMessages([]);
   });
 

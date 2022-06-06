@@ -7,6 +7,7 @@ const EVENTS = {
   CLIENT: {
     CREATE_ROOM: 'CREATE_ROOM',
     SEND_ROOM_MESSAGE: 'SEND_ROOM_MESSAGE',
+    JOIN_ROOM: 'JOIN_ROOM',
   },
   SERVER: {
     ROOMS: 'ROOMS',
@@ -53,11 +54,11 @@ function socket({ io }: { io: Server }) {
     /*
      * When a user sends a room message
      */
-    interface NewMessageParams {
+    type NewMessageParams = {
       roomId: string;
       message: string;
       username: string;
-    }
+    };
     socket.on(
       EVENTS.CLIENT.SEND_ROOM_MESSAGE,
       ({ roomId, message, username }: NewMessageParams) => {
@@ -70,6 +71,15 @@ function socket({ io }: { io: Server }) {
         });
       }
     );
+
+    /*
+     * When a user joins a room
+     */
+    socket.on(EVENTS.CLIENT.JOIN_ROOM, (roomId: string) => {
+      socket.join(roomId);
+
+      socket.emit(EVENTS.SERVER.JOINED_ROOM, roomId);
+    });
   });
 }
 
